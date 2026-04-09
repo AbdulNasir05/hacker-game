@@ -284,11 +284,21 @@ for(var i = 0; i < allCardElements.length; i++) {
 }
 
 
+var currentExplanation = "";
+
 // When a card is clicked
 function cardClicked(cardEl) {
 
   if(cardSelected) { return; }
   cardSelected = true;
+
+  // Capture explanation for immediate feedback
+  const cardText = cardEl.querySelector(".text").innerHTML;
+  const scenario = originalScenarios.find(s => s.playerCards.some(p => p.description === cardText));
+  if (scenario) {
+    const playerCard = scenario.playerCards.find(p => p.description === cardText);
+    currentExplanation = playerCard.feedback || "No explanation available.";
+  }
 
   cardEl.classList.add("played-card");
 
@@ -320,6 +330,40 @@ function revealPlayerPower(){
 function revealHackerPower(){
   var hackerCard = document.querySelector(".hacker-card");
   hackerCard.classList.add("reveal-power");
+}
+
+function showImmediateFeedback() {
+  const feedbackEl = document.getElementById('immediate-feedback');
+  const iconEl = document.getElementById('feedback-icon');
+  const titleEl = document.getElementById('feedback-title');
+  const textEl = document.getElementById('feedback-text');
+
+  if (!feedbackEl || !currentExplanation) return;
+
+  // Determine if it was a win or loss for the round
+  const isWin = currentExplanation.includes('✅') || currentExplanation.includes('Correct');
+  const isPartial = currentExplanation.includes('⚠️');
+
+  iconEl.innerHTML = isWin ? '🛡️' : (isPartial ? '⚠️' : '👹');
+  titleEl.innerText = isWin ? 'Great Defense!' : (isPartial ? 'Careful!' : 'Security Breach!');
+  titleEl.style.color = isWin ? '#4caf50' : (isPartial ? '#ff9800' : '#f44336');
+  textEl.innerHTML = currentExplanation;
+
+  feedbackEl.style.display = 'block';
+  
+  // Also show the next turn button if not game over
+  if (playerLife > 0 && hackerLife > 0) {
+      document.querySelector("button.next-turn").style.display = "block";
+      document.querySelector("button.next-turn").removeAttribute("disabled");
+  }
+}
+
+function hideImmediateFeedback() {
+  const feedbackEl = document.getElementById('immediate-feedback');
+  if (feedbackEl) {
+    feedbackEl.style.display = 'none';
+  }
+  document.querySelector("button.next-turn").style.display = "none";
 }
 
 function compareCards(){
@@ -384,8 +428,7 @@ function compareCards(){
   }
 
   roundFinished = true;
-
-  document.querySelector("button.next-turn").removeAttribute("disabled");
+  showImmediateFeedback();
 }
 
 // Shows the winner message
@@ -542,6 +585,7 @@ function shuffleArray(a) {
 // Plays one turn of the game
 function playTurn() {
 
+  hideImmediateFeedback();
   roundFinished = true;
   cardSelected = false;
 

@@ -178,9 +178,10 @@
         <button class="start-game" onClick="startGame()">Play the Game!</button>
         <button class="next-turn" onClick="playTurn()">Next!</button>
         
-        <div id="immediate-feedback" class="immediate-feedback" style="display: none; position: fixed; top: 20%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 2px solid #ffcc00; padding: 15px; border-radius: 10px; z-index: 100; text-align: center; width: 80%; max-width: 400px; color: white;">
-            <h3 id="feedback-title" style="margin: 0 0 10px 0;"></h3>
-            <p id="feedback-desc" style="margin: 0; font-size: 14px;"></p>
+        <div id="immediate-feedback" class="immediate-feedback" style="display: none; position: fixed; top: 20%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 2px solid #ffcc00; padding: 20px; border-radius: 15px; z-index: 100; text-align: center; width: 85%; max-width: 450px; color: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+            <div id="feedback-icon" style="font-size: 40px; margin-bottom: 10px;"></div>
+            <h3 id="feedback-title" style="margin: 0 0 10px 0; color: #ffcc00;"></h3>
+            <p id="feedback-text" style="margin: 0; font-size: 15px; line-height: 1.4;"></p>
         </div>
       </div>
     </div>
