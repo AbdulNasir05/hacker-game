@@ -95,6 +95,26 @@
         <h3>Top Cyber Defenders</h3>
         <div id="leaderboard-list">Loading...</div>
       </div>
+
+      <div id="analytics-section" style="margin-top: 20px; border-top: 1px solid #444; padding-top: 10px;">
+        <h3>Analytics Dashboard</h3>
+        <div id="category-stats">
+          <!-- Stats will be injected here -->
+        </div>
+        
+        <div id="xp-trend" style="margin-top: 15px;">
+          <h4>XP Progress</h4>
+          <div id="xp-trend-container" style="height: 60px; display: flex; align-items: flex-end; gap: 2px; background: #111; padding: 5px; border-radius: 5px;">
+            <!-- Trend bars will be injected here -->
+          </div>
+        </div>
+
+        <div id="security-tips" style="margin-top: 15px; background: #222; padding: 10px; border-radius: 5px; border-left: 4px solid #ffcc00;">
+          <h4>Pro Tip</h4>
+          <p id="dynamic-tip" style="font-size: 13px; color: #ccc; margin: 5px 0 0 0;">Keep playing to get personalized security tips!</p>
+        </div>
+      </div>
+
       <button class="modal-close" onclick="toggleStats()">Close</button>
     </div>
 
@@ -157,6 +177,11 @@
 
         <button class="start-game" onClick="startGame()">Play the Game!</button>
         <button class="next-turn" onClick="playTurn()">Next!</button>
+        
+        <div id="immediate-feedback" class="immediate-feedback" style="display: none; position: fixed; top: 20%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 2px solid #ffcc00; padding: 15px; border-radius: 10px; z-index: 100; text-align: center; width: 80%; max-width: 400px; color: white;">
+            <h3 id="feedback-title" style="margin: 0 0 10px 0;"></h3>
+            <p id="feedback-desc" style="margin: 0; font-size: 14px;"></p>
+        </div>
       </div>
     </div>
 

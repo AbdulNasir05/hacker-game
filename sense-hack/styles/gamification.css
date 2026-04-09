@@ -91,6 +91,8 @@
     transform: translate(-50%, -50%);
     width: 80%;
     max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid #ffcc00;
     border-radius: 15px;

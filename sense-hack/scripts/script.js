@@ -10,6 +10,18 @@ var playerStreak = parseInt(localStorage.getItem('playerStreak')) || 0;
 var lastPlayDate = localStorage.getItem('lastPlayDate');
 var dailyChallengeCompleted = localStorage.getItem('dailyChallengeCompleted') === new Date().toDateString();
 
+// Analytics State
+var playerStats = JSON.parse(localStorage.getItem('playerStats')) || {
+    "Network Security": { wins: 0, total: 0 },
+    "Phishing": { wins: 0, total: 0 },
+    "Privacy": { wins: 0, total: 0 },
+    "Password Security": { wins: 0, total: 0 },
+    "Data Protection": { wins: 0, total: 0 },
+    "Malware": { wins: 0, total: 0 }
+};
+var xpHistory = JSON.parse(localStorage.getItem('xpHistory')) || [];
+var currentCategory = "";
+
 function checkStreak() {
   const today = new Date().toDateString();
   const dailyBtn = document.getElementById('daily-challenge-btn');
@@ -83,12 +95,79 @@ function unlockBadge(badgeId) {
 function addXP(amount) {
   playerXP += amount;
   localStorage.setItem('playerXP', playerXP);
+  
+  // Track XP History for Analytics
+  xpHistory.push({ timestamp: Date.now(), xp: playerXP });
+  // Keep only last 50 entries to save space
+  if (xpHistory.length > 50) xpHistory.shift();
+  localStorage.setItem('xpHistory', JSON.stringify(xpHistory));
+
   updateGamificationUI();
   
   // Update Leaderboard if Firebase is configured
   if (typeof updateLeaderboard === 'function') {
       updateLeaderboard(playerXP);
   }
+}
+
+function updateAnalyticsUI() {
+    const categoryStatsEl = document.getElementById('category-stats');
+    const xpTrendEl = document.getElementById('xp-trend-container');
+    const tipEl = document.getElementById('dynamic-tip');
+    
+    // Category Accuracy
+    let categoryHTML = "";
+    let weakestCategory = "";
+    let minAccuracy = 101;
+
+    for (const [category, data] of Object.entries(playerStats)) {
+        const accuracy = data.total > 0 ? Math.round((data.wins / data.total) * 100) : 0;
+        
+        if (data.total > 0 && accuracy < minAccuracy) {
+            minAccuracy = accuracy;
+            weakestCategory = category;
+        }
+
+        categoryHTML += `
+            <div style="margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 2px;">
+                    <span>${category}</span>
+                    <span>${accuracy}% (${data.wins}/${data.total})</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; border: 1px solid #333;">
+                    <div style="width: ${accuracy}%; height: 100%; background: ${accuracy > 70 ? '#4caf50' : accuracy > 40 ? '#ff9800' : '#f44336'}; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+        `;
+    }
+    categoryStatsEl.innerHTML = categoryHTML;
+    
+    // Dynamic Tip
+    const tips = {
+        "Network Security": "Avoid using public Wi-Fi for sensitive tasks like banking. Use a VPN if you must connect.",
+        "Phishing": "Always check the sender's email address and hover over links before clicking to spot fake websites.",
+        "Privacy": "Review your social media privacy settings frequently and avoid sharing your real-time location.",
+        "Password Security": "Use a unique, strong password for every account. Consider using a password manager.",
+        "Data Protection": "Follow the 3-2-1 rule: 3 copies of data, on 2 different media, with 1 copy off-site.",
+        "Malware": "Never plug in unknown USB drives and always keep your software and OS updated to the latest version."
+    };
+
+    if (weakestCategory && tips[weakestCategory]) {
+        tipEl.innerText = `Focus on ${weakestCategory}: ${tips[weakestCategory]}`;
+    } else {
+        tipEl.innerText = "Keep playing scenarios to get personalized security tips!";
+    }
+
+    // XP Trend
+    if (xpHistory.length > 0) {
+        const maxXP = Math.max(...xpHistory.map(h => h.xp));
+        xpTrendEl.innerHTML = xpHistory.slice(-20).map(h => {
+            const height = (h.xp / (maxXP || 1)) * 100;
+            return `<div style="flex: 1; height: ${height}%; background: #ffcc00; opacity: 0.6; border-radius: 2px 2px 0 0;" title="${h.xp} XP"></div>`;
+        }).join("");
+    } else {
+        xpTrendEl.innerHTML = "<span style='font-size: 12px; color: #555;'>No data yet.</span>";
+    }
 }
 
 async function toggleStats() {
@@ -101,6 +180,7 @@ async function toggleStats() {
   
   if (!isVisible) {
       updateGamificationUI();
+      updateAnalyticsUI();
       loadLeaderboard();
       if (typeof updateAuthUI === 'function' && auth) {
           updateAuthUI(auth.currentUser);
@@ -254,6 +334,14 @@ function compareCards(){
 
   var powerDifference = playerPower - hackerPower;
 
+  // Track attempt for analytics
+  if (currentCategory) {
+    if (!playerStats[currentCategory]) {
+        playerStats[currentCategory] = { wins: 0, total: 0 };
+    }
+    playerStats[currentCategory].total++;
+  }
+
   if (powerDifference < 0) {
     // Player Loses
     playerLife = playerLife + powerDifference;
@@ -270,6 +358,11 @@ function compareCards(){
     // Add XP for round win
     addXP(10);
     
+    // Track win for analytics
+    if (currentCategory) {
+        playerStats[currentCategory].wins++;
+    }
+
     // Check for Perfect Shield badge
     if (playerPower >= 5) {
       unlockBadge('perfect');
@@ -278,6 +371,9 @@ function compareCards(){
     playerCard.classList.add("tie-card");
     hackerCard.classList.add("tie-card");
   }
+
+  // Save analytics
+  localStorage.setItem('playerStats', JSON.stringify(playerStats));
 
   updateScores();
 
@@ -470,9 +566,19 @@ function playTurn() {
 
 function revealCards(){
 
-
   var j = 0;
   var cardIndexes = shuffleArray([0, 1, 2]);
+
+  // Reload scenarios if they run out (prevents crash)
+  if (scenarios.length === 0) {
+      if (typeof originalScenarios !== 'undefined') {
+          scenarios = [...originalScenarios];
+      } else {
+          // Fallback if originalScenarios is not defined (requires cards.js to be structured to allow this)
+          console.error("No more scenarios available!");
+          return;
+      }
+  }
 
   // Get scenario cards
   console.log("scenarios.length == " + scenarios.length);
@@ -490,6 +596,7 @@ function revealCards(){
   }
   
   var scenario = scenarios[randomScenarioIndex];
+  currentCategory = scenario.category || "General";
   console.log(scenario.hackerCard.description);
 
   // Always splice to avoid repetition in any mode

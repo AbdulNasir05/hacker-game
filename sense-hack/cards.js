@@ -4,6 +4,7 @@
 
 var scenarios = [
   {
+    category: "Network Security",
     hackerCard : {
       description : "I set up a fake Wi-Fi station to steal people’s email and track them online.",
       power : 4,
@@ -24,6 +25,7 @@ var scenarios = [
     ]
   },
   {
+    category: "Phishing",
     hackerCard : {
       description : "I sent a fake email from your bank asking for your account details.",
       power : 3,
@@ -44,6 +46,7 @@ var scenarios = [
     ]
   },
   {
+    category: "Privacy",
     hackerCard : {
       description : "I figured out where you live from all the personal information you share on social media.",
       power : 3,
@@ -64,6 +67,7 @@ var scenarios = [
     ]
   },
   {
+    category: "Password Security",
     hackerCard : {
       description : "I watched you type your password and hacked your account.",
       power : 2,
@@ -84,6 +88,7 @@ var scenarios = [
     ]
   },
   {
+    category: "Privacy",
     hackerCard : {
       description : "I looked at your browsing history on your phone to see what you do online.",
       power : 2,
@@ -105,6 +110,7 @@ var scenarios = [
   }, 
 
   {
+    category: "Data Protection",
     hackerCard : {
       description : "I hacked your system and all your data is deleted now.",
       power : 2,
@@ -126,6 +132,7 @@ var scenarios = [
   }, 
 
   {
+    category: "Malware",
     hackerCard : {
       description : "I provided you my USB for content transfer.",
       power : 2,
@@ -146,6 +153,7 @@ var scenarios = [
     ]
   }, 
   {
+    category: "Malware",
     hackerCard : {
       description : "I will crash your vulnerable system using ransomware attacks, malware and data breaches.",
       power : 2,
@@ -166,3 +174,6 @@ var scenarios = [
     ]
   }
 ];
+
+// Save original copy for reloading
+var originalScenarios = [...scenarios];
