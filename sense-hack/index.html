@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sense Hack 👹</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="128x128"
+      href="images/favicon.png"
+    />
+
+    <link rel="stylesheet" href="styles/style.css" type="text/css" />
+    <link rel="stylesheet" href="customize.css" type="text/css" />
+    <link rel="stylesheet" href="styles/gamification.css" type="text/css" />
+    <script src="cards.js" type="text/javascript"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  </head>
+
+  <body>
+    <div class="stats-trigger" onclick="toggleStats()">📊 Stats</div>
+
+    <div class="gamification-container">
+      <div class="level-badge">LVL <span id="player-level">1</span></div>
+      <div class="xp-bar-container">
+        <div id="xp-bar" class="xp-bar-fill"></div>
+      </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay" onclick="toggleStats()"></div>
+    <div id="stats-modal" class="stats-modal">
+      <h2>Your Profile</h2>
+      <p>Current XP: <span id="stats-xp">0</span></p>
+      <p>🔥 Streak: <span id="stats-streak">0</span> days</p>
+      <div class="badges-grid">
+        <div class="badge-item" id="badge-first-win">
+          <div class="badge-icon">🏆</div>
+          <div class="badge-name">First Win</div>
+        </div>
+        <div class="badge-item" id="badge-perfect">
+          <div class="badge-icon">🛡️</div>
+          <div class="badge-name">Perfect Shield</div>
+        </div>
+        <div class="badge-item" id="badge-survivor">
+          <div class="badge-icon">❤️</div>
+          <div class="badge-name">Survivor</div>
+        </div>
+        <div class="badge-item" id="badge-master">
+          <div class="badge-icon">🔥</div>
+          <div class="badge-name">Cyber Master</div>
+        </div>
+      </div>
+      
+      <div id="leaderboard-section" style="margin-top: 20px; border-top: 1px solid #444; padding-top: 10px;">
+        <h3>Top Cyber Defenders</h3>
+        <div id="leaderboard-list">Loading...</div>
+      </div>
+      <button class="modal-close" onclick="toggleStats()">Close</button>
+    </div>
+
+    <div class="game-board">
+      <!-- <h1>
+        <strong>Hacker's attack Cards</strong> <br />
+        Choose the best card to stop the hackers' attack <br />
+      </h1> -->
+      <div class="title-h1">
+        <h1>
+          <strong>Hacker's attack Cards</strong> <br />
+          Choose the best card to stop the hackers' attack
+        </h1>
+      </div>
+      <div class="hacker-area">
+        <div class="stats hacker-stats">
+          <div class="life-bar">
+            <div class="life-left hacker-color"></div>
+          </div>
+          <div class="life-total"></div>
+          <div class="thumbnail">
+            <img src="images/1.png" alt="hacker" />
+          </div>
+          <div class="name">Hacker</div>
+        </div>
+
+        <div class="card hacker-card hacker-color">
+          <div class="text"></div>
+          <div class="power"></div>
+        </div>
+      </div>
+
+      <div class="player-area">
+        <div class="stats player-stats">
+          <div class="life-bar">
+            <div class="life-left player-color"></div>
+          </div>
+          <div class="life-total"></div>
+          <!-- Change the name and emoji here -->
+          <div class="thumbnail">
+            <img src="images/2.png" alt="hacker" />
+          </div>
+          <div class="name">You</div>
+        </div>
+
+        <div class="card player-card player-color">
+          <div class="text"></div>
+          <div class="power"></div>
+        </div>
+
+        <div class="card player-card player-color">
+          <div class="text"></div>
+          <div class="power"></div>
+        </div>
+
+        <div class="card player-card player-color">
+          <div class="text"></div>
+          <div class="power"></div>
+        </div>
+
+        <button class="start-game" onClick="startGame()">Play the Game!</button>
+        <button class="next-turn" onClick="playTurn()">Next!</button>
+      </div>
+    </div>
+
+    <div class="winner-section">
+      <div>
+        <span class="winner-message">You got hacked!</span>
+        <button class="restart" onClick="location.reload()">Play Again</button>
+        <button class="share" onClick="shareResult()">Share Score 🐦</button>
+      </div>
+    </div>
+
+    <script src="scripts/firebase-config.js" type="text/javascript"></script>
+    <script src="scripts/script.js" type="text/javascript"></script>
+  </body>
+</html>
