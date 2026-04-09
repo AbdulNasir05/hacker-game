@@ -41,6 +41,35 @@
     pointer-events: auto;
 }
 
+.daily-btn {
+    margin-top: 10px;
+    background: #ffcc00;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 4px 0 #b38f00;
+    transition: all 0.1s;
+}
+
+.daily-btn:hover {
+    background: #ffd633;
+}
+
+.daily-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b38f00;
+}
+
+.daily-btn:disabled {
+    background: #444;
+    color: #888;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
 .stats-trigger {
     position: absolute;
     top: 20px;

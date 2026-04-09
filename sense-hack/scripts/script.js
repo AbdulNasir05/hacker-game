@@ -8,28 +8,45 @@ var playerXP = parseInt(localStorage.getItem('playerXP')) || 0;
 var playerBadges = JSON.parse(localStorage.getItem('playerBadges')) || [];
 var playerStreak = parseInt(localStorage.getItem('playerStreak')) || 0;
 var lastPlayDate = localStorage.getItem('lastPlayDate');
+var dailyChallengeCompleted = localStorage.getItem('dailyChallengeCompleted') === new Date().toDateString();
 
 function checkStreak() {
   const today = new Date().toDateString();
+  const dailyBtn = document.getElementById('daily-challenge-btn');
+  
+  if (dailyChallengeCompleted) {
+      if (dailyBtn) {
+          dailyBtn.innerText = "✅ Daily Done";
+          dailyBtn.disabled = true;
+      }
+  }
+
   if (lastPlayDate !== today) {
     if (lastPlayDate) {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
       if (lastPlayDate === yesterday.toDateString()) {
-        playerStreak++;
+        // Streak continues, but we only increment when they finish the daily challenge
       } else {
-        playerStreak = 1;
+        playerStreak = 0;
+        localStorage.setItem('playerStreak', playerStreak);
       }
-    } else {
-      playerStreak = 1;
     }
-    localStorage.setItem('playerStreak', playerStreak);
-    localStorage.setItem('lastPlayDate', today);
-    
-    // Bonus XP for daily play
-    addXP(20 * playerStreak);
-    alert("Daily Challenge Complete! Streak: " + playerStreak + " days. Bonus XP: " + (20 * playerStreak));
   }
+}
+
+var isDailyChallenge = false;
+var dailyRound = 0;
+
+function startDailyChallenge() {
+    if (dailyChallengeCompleted) {
+        alert("You've already completed today's challenge!");
+        return;
+    }
+    
+    isDailyChallenge = true;
+    dailyRound = 0;
+    startGame();
 }
 
 function updateGamificationUI() {
@@ -299,7 +316,43 @@ function gameOver(winner) {
     if (playerLife === 1) {
       unlockBadge('survivor');
     }
+
+    // Daily Challenge Completion
+    if (isDailyChallenge) {
+        const today = new Date().toDateString();
+        dailyChallengeCompleted = true;
+        localStorage.setItem('dailyChallengeCompleted', today);
+        
+        // Update Streak
+        if (lastPlayDate) {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (lastPlayDate === yesterday.toDateString()) {
+                playerStreak++;
+            } else if (lastPlayDate !== today) {
+                playerStreak = 1;
+            }
+        } else {
+            playerStreak = 1;
+        }
+        
+        localStorage.setItem('playerStreak', playerStreak);
+        localStorage.setItem('lastPlayDate', today);
+        
+        // Bonus XP for daily challenge + streak
+        const bonus = 50 + (20 * playerStreak);
+        addXP(bonus);
+        
+        alert("Daily Challenge Complete! Streak: " + playerStreak + " days. Bonus XP: " + bonus);
+        
+        const dailyBtn = document.getElementById('daily-challenge-btn');
+        if (dailyBtn) {
+            dailyBtn.innerText = "✅ Daily Done";
+            dailyBtn.disabled = true;
+        }
+    }
   }
+  isDailyChallenge = false;
 }
 
 
@@ -421,10 +474,22 @@ function revealCards(){
   // Get scenario cards
   console.log("scenarios.length == " + scenarios.length);
 
-  var randomScenarioIndex = Math.floor(Math.random() * scenarios.length);
+  var randomScenarioIndex;
+  if (isDailyChallenge) {
+    // Select scenario based on date + round number to ensure variation in the same session
+    const today = new Date();
+    const dateInt = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+    randomScenarioIndex = (dateInt + dailyRound) % scenarios.length;
+    console.log("Daily Challenge Scenario Index:", randomScenarioIndex, "Round:", dailyRound);
+    dailyRound++;
+  } else {
+    randomScenarioIndex = Math.floor(Math.random() * scenarios.length);
+  }
+  
   var scenario = scenarios[randomScenarioIndex];
   console.log(scenario.hackerCard.description);
 
+  // Always splice to avoid repetition in any mode
   scenarios.splice(randomScenarioIndex, 1);
 
   console.log("scenarios.length after splice == " + scenarios.length);
