@@ -128,3 +128,41 @@
     background: rgba(0, 0, 0, 0.7);
     z-index: 999;
 }
+
+/* Auth Buttons */
+.auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.auth-btn {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    transition: transform 0.2s;
+}
+
+.auth-btn:active {
+    transform: scale(0.98);
+}
+
+.google-btn {
+    background: white;
+    color: #444;
+    border: 1px solid #ddd;
+}
+
+.email-btn {
+    background: #444;
+    color: white;
+}
+
+.phone-btn {
+    background: #444;
+    color: white;
+}

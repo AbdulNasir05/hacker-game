@@ -85,7 +85,45 @@ async function toggleStats() {
   if (!isVisible) {
       updateGamificationUI();
       loadLeaderboard();
+      // Initialize reCAPTCHA when modal is opened if not already done
+      if (!window.recaptchaVerifier && auth) {
+          window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible'
+          });
+      }
   }
+}
+
+// Authentication Helpers
+function toggleEmailForm() {
+    const form = document.getElementById('email-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('phone-form').style.display = 'none';
+}
+
+function togglePhoneForm() {
+    const form = document.getElementById('phone-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('email-form').style.display = 'none';
+}
+
+function handleEmailAuth(isSignUp) {
+    const email = document.getElementById('email-input').value;
+    const password = document.getElementById('password-input').value;
+    if (!email || !password) return alert("Email and password required");
+    signInWithEmail(email, password, isSignUp);
+}
+
+function handlePhoneAuth() {
+    const phone = document.getElementById('phone-input').value;
+    if (!phone) return alert("Phone number required (+1234567890)");
+    signInWithPhone(phone);
+}
+
+function handlePhoneVerify() {
+    const code = document.getElementById('verification-code').value;
+    if (!code) return alert("Verification code required");
+    verifyPhoneCode(code);
 }
 
 async function loadLeaderboard() {

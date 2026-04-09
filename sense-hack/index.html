@@ -35,6 +35,40 @@
     <div id="modal-overlay" class="modal-overlay" onclick="toggleStats()"></div>
     <div id="stats-modal" class="stats-modal">
       <h2>Your Profile</h2>
+      <div id="profile-info"><strong>Status:</strong> Loading...</div>
+      
+      <div id="auth-section" style="margin: 15px 0; padding: 10px; border: 1px dashed #ffcc00; border-radius: 10px;">
+        <p style="font-size: 12px; margin-bottom: 10px;">Save your progress by signing in!</p>
+        <div class="auth-buttons">
+            <button onclick="signInWithGoogle()" class="auth-btn google-btn">Sign in with Google</button>
+            <button onclick="toggleEmailForm()" class="auth-btn email-btn">Email/Password</button>
+            <button onclick="togglePhoneForm()" class="auth-btn phone-btn">Phone Number</button>
+        </div>
+
+        <!-- Email Form -->
+        <div id="email-form" style="display: none; margin-top: 10px; text-align: left;">
+            <input type="email" id="email-input" placeholder="Email" style="width: 100%; margin-bottom: 5px; padding: 5px; background: #222; color: white; border: 1px solid #444;">
+            <input type="password" id="password-input" placeholder="Password" style="width: 100%; margin-bottom: 5px; padding: 5px; background: #222; color: white; border: 1px solid #444;">
+            <div style="display: flex; gap: 5px;">
+                <button onclick="handleEmailAuth(false)" style="flex: 1; padding: 5px; background: #ffcc00; color: black; border: none; font-weight: bold;">Login</button>
+                <button onclick="handleEmailAuth(true)" style="flex: 1; padding: 5px; background: #444; color: white; border: none; font-weight: bold;">Sign Up</button>
+            </div>
+        </div>
+
+        <!-- Phone Form -->
+        <div id="phone-form" style="display: none; margin-top: 10px; text-align: left;">
+            <div id="phone-input-section">
+                <input type="tel" id="phone-input" placeholder="+1234567890" style="width: 100%; margin-bottom: 5px; padding: 5px; background: #222; color: white; border: 1px solid #444;">
+                <div id="recaptcha-container"></div>
+                <button onclick="handlePhoneAuth()" style="width: 100%; padding: 5px; background: #ffcc00; color: black; border: none; font-weight: bold;">Send Code</button>
+            </div>
+            <div id="phone-verify-section" style="display: none;">
+                <input type="text" id="verification-code" placeholder="6-digit code" style="width: 100%; margin-bottom: 5px; padding: 5px; background: #222; color: white; border: 1px solid #444;">
+                <button onclick="handlePhoneVerify()" style="width: 100%; padding: 5px; background: #ffcc00; color: black; border: none; font-weight: bold;">Verify Code</button>
+            </div>
+        </div>
+      </div>
+
       <p>Current XP: <span id="stats-xp">0</span></p>
       <p>🔥 Streak: <span id="stats-streak">0</span> days</p>
       <div class="badges-grid">
