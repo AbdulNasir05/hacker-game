@@ -102,6 +102,9 @@ async function toggleStats() {
   if (!isVisible) {
       updateGamificationUI();
       loadLeaderboard();
+      if (typeof updateAuthUI === 'function' && auth) {
+          updateAuthUI(auth.currentUser);
+      }
       // Initialize reCAPTCHA when modal is opened if not already done
       if (!window.recaptchaVerifier && auth) {
           window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {

@@ -58,6 +58,9 @@ async function signInWithGoogle() {
         } else {
             await auth.signInWithPopup(provider);
         }
+        updateAuthUI(auth.currentUser);
+        // Update leaderboard name immediately
+        if (typeof playerXP !== 'undefined') updateLeaderboard(playerXP);
     } catch (error) {
         console.error("Google Auth Error:", error);
         alert("Auth failed: " + error.message);
@@ -77,6 +80,8 @@ async function signInWithEmail(email, password, isSignUp) {
             await auth.signInWithEmailAndPassword(email, password);
         }
         hideAuthForms();
+        updateAuthUI(auth.currentUser);
+        if (typeof playerXP !== 'undefined') updateLeaderboard(playerXP);
     } catch (error) {
         console.error("Email Auth Error:", error);
         alert("Auth failed: " + error.message);
@@ -106,6 +111,8 @@ async function verifyPhoneCode(code) {
             await confirmationResult.confirm(code);
         }
         hideAuthForms();
+        updateAuthUI(auth.currentUser);
+        if (typeof playerXP !== 'undefined') updateLeaderboard(playerXP);
     } catch (error) {
         console.error("Phone Verify Error:", error);
         alert("Verification failed: " + error.message);
